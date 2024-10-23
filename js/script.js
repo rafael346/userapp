@@ -1,103 +1,88 @@
 $(document).ready(function () {
-  // Função para carregar usuários
+  // Função para carregar e exibir os usuários na tabela
   function loadUsers() {
     $.ajax({
-      url: '../get_users.php',
+      url: 'get_users.php', // Caminho para o script PHP que retorna os usuários
       method: 'GET',
       success: function (data) {
-        let users = JSON.parse(data);
+        let users = JSON.parse(data); // Converte JSON para objeto JavaScript
         let rows = '';
+
         users.forEach(user => {
           rows += `
-        <tr>
-            <td>${user.id}</td>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.status}</td>
-            <td>${user.admission_date}</td>
-            <td>${user.created_at}</td>
-            <td>${user.updated_at}</td>
-            <td>
-                <button class="btn btn-warning btn-sm me-1 edit-user" data-id="${user.id}">
-                    <i class="bi bi-pencil-square"></i> Editar
-                </button>
-                <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">
-                    <i class="bi bi-trash"></i> Excluir
-                </button>
-            </td>
-        </tr>
-    `;
+                      <tr>
+                          <td>${user.id}</td>
+                          <td>${user.name}</td>
+                          <td>${user.email}</td>
+                          <td>${user.status}</td>
+                          <td>${user.admission_date}</td>
+                          <td>${user.created_at}</td>
+                          <td>${user.updated_at}</td>
+                      </tr>
+                  `;
         });
-        $('#user-table tbody').html(rows);
+
+        $('#user-table tbody').html(rows); // Atualiza o conteúdo da tabela
+      },
+      error: function (xhr, status, error) {
+        console.error('Erro ao carregar usuários:', error);
       }
     });
   }
-  function showToast(message, icon = 'success') {
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      icon: icon,
-      title: message
-    });
-  }
-  // Carregar usuários inicialmente
+
+  // Carrega os usuários inicialmente ao abrir a página
   loadUsers();
 
-  // Adicionar novo usuário via AJAX
+  // Botão "Adicionar Usuário" - Abre um modal SweetAlert2 para adicionar um novo usuário
   $('#add-user').click(function () {
-    $('#userModal').modal('show');
-  });
-
-  $('#user-form').submit(function (e) {
-    e.preventDefault();
-
-    const data = {
-      name: $('#name').val(),
-      email: $('#email').val(),
-      status: $('#status').val(),
-      admission_date: $('#admission_date').val()
-    };
-
-    $.ajax({
-      url: '../add_user.php',
-      method: 'POST',
-      data: data,
-      success: function (response) {
-        $('#userModal').modal('hide');
-        showToast('Usuário adicionado com sucesso!');
-        loadUsers();
-      }
-    });
-  });
-
-  $(document).on('click', '.delete-user', function () {
-    const userId = $(this).data('id');
-
     Swal.fire({
-      title: 'Tem certeza?',
-      text: 'Esta ação não pode ser desfeita!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, excluir!',
-      cancelButtonText: 'Cancelar'
+      title: 'Adicionar Usuário',
+      html: `
+              <input type="text" id="name" class="swal2-input" placeholder="Nome">
+              <input type="email" id="email" class="swal2-input" placeholder="Email">
+              <input type="text" id="status" class="swal2-input" placeholder="Situação">
+              <input type="date" id="admission_date" class="swal2-input" placeholder="Data de Admissão">
+          `,
+      confirmButtonText: 'Salvar',
+      focusConfirm: false,
+      preConfirm: () => {
+        const name = Swal.getPopup().querySelector('#name').value;
+        const email = Swal.getPopup().querySelector('#email').value;
+        const status = Swal.getPopup().querySelector('#status').value;
+        const admission_date = Swal.getPopup().querySelector('#admission_date').value;
+
+        if (!name || !email || !status || !admission_date) {
+          Swal.showValidationMessage(`Preencha todos os campos`);
+          return false;
+        }
+
+        return { name, email, status, admission_date };
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         $.ajax({
-          url: '../delete_user.php',
+          url: '../add_user.php', // Caminho para o script PHP que adiciona usuários
           method: 'POST',
-          data: { id: userId },
+          data: result.value,
           success: function (response) {
-            showToast('Usuário excluído com sucesso!');
-            loadUsers();
+            let res = JSON.parse(response);
+
+            if (res.success) {
+              Swal.fire('Sucesso!', 'Usuário adicionado com sucesso!', 'success');
+              loadUsers(); // Atualiza a lista de usuários
+            } else if (res.error) {
+              Swal.fire('Erro!', res.error, 'error');
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error('Erro ao adicionar usuário:', error);
+            Swal.fire('Erro!', 'Não foi possível adicionar o usuário.', 'error');
           }
         });
       }
     });
   });
 
-
-  // Atualizar tabela automaticamente a cada 5 segundos
+  // Atualiza a tabela de usuários a cada 5 segundos
   setInterval(loadUsers, 5000);
 });

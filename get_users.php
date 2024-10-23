@@ -1,6 +1,7 @@
 <?php
-require 'db/db_connection.php';
-
+require 'db_connection.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 // Query para buscar todos os usuários
 $stmt = $pdo->query("SELECT * FROM users");
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
