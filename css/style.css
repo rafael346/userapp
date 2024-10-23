@@ -1,0 +1,17 @@
+body {
+  background-color: #f8f9fa;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #343a40;
+}
+
+.table {
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.btn i {
+  margin-right: 5px;
+}
