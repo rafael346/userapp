@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$dbname = 'usuarios_app';
+$dbname = 'users_app';
 $username = 'root'; // ou o usuário do seu banco
-$password = '123456'; // a senha do seu banco
+$password = 123456; // a senha do seu banco
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
