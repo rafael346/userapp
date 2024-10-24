@@ -5,7 +5,7 @@ $(document).ready(function () {
       url: 'get_users.php', // Caminho para o script PHP que retorna os usuários
       method: 'GET',
       success: function (data) {
-        let users = JSON.parse(data); // Converte JSON para objeto JavaScript
+        let users = data; // Converte JSON para objeto JavaScript
         let rows = '';
 
         users.forEach(user => {
@@ -61,7 +61,7 @@ $(document).ready(function () {
     }).then((result) => {
       if (result.isConfirmed) {
         $.ajax({
-          url: '../add_user.php', // Caminho para o script PHP que adiciona usuários
+          url: 'add_user.php', // Caminho para o script PHP que adiciona usuários
           method: 'POST',
           data: result.value,
           success: function (response) {
