@@ -35,7 +35,7 @@ function loadUsers() {
 function editUser(userId) {
   // Recupera os dados do usuário pelo ID e exibe no modal
   $.ajax({
-    url: '../userapp/get_user.php', // Caminho para o script PHP que retorna dados do usuário
+    url: 'get_user.php', // Caminho para o script PHP que retorna dados do usuário
     method: 'GET',
     data: { id: userId },
     success: function (response) {
@@ -66,7 +66,7 @@ function editUser(userId) {
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
-            url: '../userapp/edit_user.php', // Caminho para o script PHP que edita usuários
+            url: 'edit_user.php', // Caminho para o script PHP que edita usuários
             method: 'POST',
             data: result.value,
             success: function (response) {
@@ -106,7 +106,7 @@ function deleteUser(userId) {
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
-        url: '../userapp/delete_user.php', // Caminho para o script PHP que deleta usuários
+        url: 'delete_user.php', // Caminho para o script PHP que deleta usuários
         method: 'POST',
         data: { id: userId },
         success: function (response) {
@@ -155,7 +155,7 @@ function addUser() {
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
-        url: '../userapp/add_user.php', // Caminho para o script PHP que adiciona usuários
+        url: 'add_user.php', // Caminho para o script PHP que adiciona usuários
         method: 'POST',
         data: result.value,
         success: function (response) {
